@@ -4,12 +4,15 @@
 <script>
   // This is where stuff in our game will happen:
   var scene = new THREE.Scene();
+  var marker = new THREE.Object3D();
+  
+  scene.add(marker);
 
   // This is what sees the stuff:
   var aspect_ratio = window.innerWidth / window.innerHeight;
   var camera = new THREE.PerspectiveCamera(75, aspect_ratio, 1, 10000);
   camera.position.z = 500;
-  scene.add(camera);
+  marker.add(camera);
 
   // This will draw what the camera sees onto the screen:
   var renderer = new THREE.CanvasRenderer();
@@ -22,7 +25,7 @@
   var body   = new THREE.SphereGeometry(100);
   var avatar = new THREE.Mesh(body, cover);
   
-  scene.add(avatar);
+  marker.add(avatar);
   
   //////////// hand
   
@@ -49,11 +52,33 @@
   left_foot.position.set(75, -125, 0);
   avatar.add(left_foot);
   
+  /////////// Trees
+  makeTreeAt( 500, 0);
+  makeTreeAt(-500, 0);
+  makeTreeAt( 750, -1000);
+  makeTreeAt(-750, -1000);
+  
+  function makeTreeAt(x, z) {
+    console.log("makeTreeAt(" +x +", " +z +")");
+    var trunk = new THREE.Mesh(
+      new THREE.CylinderGeometry(50,50,200),
+      new THREE.MeshBasicMaterial({color: 0xA0522D})
+    );
+    var top = new THREE.Mesh(
+      new THREE.SphereGeometry(150),
+      new THREE.MeshBasicMaterial({color: 0x228B22})
+    );
+    top.position.y = 175;
+    trunk.add(top);
+    trunk.position.set(x, -75, z);
+    scene.add(trunk);
+  }
+    
+  // Auf Tastendruckereignissse lauschen
   var is_cart_wheeling = false;
   var is_flipping      = false;
   var is_rotating      = false;
-  
-  // Auf Tastendruckereignissse lauschen
+
   document.addEventListener('keydown', function(even) {
     var code  = event.keyCode;
     var up    = 38;
@@ -67,16 +92,16 @@
     console.log("key-code: " +code);  
     
     if (code == up) {
-      avatar.position.y += 5;
+      marker.position.y += 5;
     }
     if (code == down) {
-      avatar.position.y -= 5;
+      marker.position.y -= 5;
     }
     if (code == right) {
-      avatar.position.x += 5;
+      marker.position.x += 5;
     }
     if (code == left) {
-      avatar.position.x -= 5;
+      marker.position.x -= 5;
     }
     if (code == c) {
       is_cart_wheeling = !is_cart_wheeling;
@@ -87,31 +112,10 @@
     if (code == r) {
       is_rotating = !is_rotating;
     }
-    
-    makeTreeAt( 500, 0);
-    makeTreeAt(-500, 0);
-    makeTreeAt( 750, -1000);
-    makeTreeAt(-750, -1000);
-    
-    function makeTreeAt(x, z) {
-      console.log("hallo");
-      var trunk = new THREE.Mesh(
-        new THREE.CylinderGeometry(50,50,200),
-        new THREE.MeshBasicMaterial({color: 0xA0522D})
-      );
-      var top = new THREE.Mesh(
-        new THREE.SphereGeometry(150),
-        new THREE.MeshBasicMaterial({color: 0x228B22})
-      );
-      top.position.y = 175;
-      trunk.add(top);
-      trunk.position.set(x, -75, z);
-      scene.add(trunk);
-    }
-
   });
-
+  
   function animate() {
+    //console.log("animate()...")
     requestAnimationFrame(animate);
    
     if (is_cart_wheeling) {
