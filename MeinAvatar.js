@@ -27,6 +27,14 @@
   
   marker.add(avatar);
   
+  
+  //////////// head
+  
+  var head_shape = new THREE.SphereGeometry(65);
+  var head  = new THREE.Mesh(head_shape, cover);
+  head.position.set(0, 165, 0);
+  avatar.add(head);
+  
   //////////// hand
   
   var hand       = new THREE.SphereGeometry(50);
